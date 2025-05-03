@@ -72,7 +72,8 @@ function App() {
 
   return (
     <div className="App">
-      {user ? (
+      { user ? (
+
         <div className="layout">
           <header className="header">
             <form
@@ -114,8 +115,11 @@ function App() {
             )}
           </div>
         </div>
+
       ) : (
+
         <Auth />
+
       )}
     </div>
   );
