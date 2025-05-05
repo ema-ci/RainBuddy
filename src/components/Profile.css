@@ -1,0 +1,106 @@
+.profile-container {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.back-button, .save-button, .delete-button, .delete-confirm-button, .cancel-button {
+  background: none;
+  border: none;
+  padding: 12px;
+  cursor: pointer;
+  color: #666;
+  font-size: 1rem;
+  border-radius: 4px;
+}
+
+.back-button {
+  background: var(--background-color);
+  color: black;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group form {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group input {
+  width: 100%;
+  margin-bottom: 1rem;
+  padding: 0.8rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
+.form-group label {
+  display: flex;
+  margin-bottom: 5px;
+}
+
+.form-group input[type="checkbox"] {
+  margin-right: 8px;
+  width: auto;
+}
+
+.save-button {
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.message {
+  padding: 10px;
+  margin: 10px 0;
+  background: #f8f9fa;
+  border-radius: 4px;
+}
+
+.danger-zone {
+  margin-top: 30px;
+  border-top: 1px solid var(--background-color);
+}
+
+.delete-button {
+  background: #f44336;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.delete-confirmation {
+  background: #fff0f0;
+  padding: 15px;
+  border-radius: 4px;
+}
+
+.delete-confirm-button {
+  background: #f44336;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  margin-right: 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.cancel-button {
+  background: #ccc;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+}

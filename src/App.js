@@ -1,4 +1,6 @@
 import './App.css';
+import sample from './assets/sample.png';
+
 import React, { useState, useEffect } from 'react';
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { db } from './FirebaseConfig';
@@ -6,12 +8,23 @@ import { doc, getDoc } from 'firebase/firestore';
 
 import { fetchLocation, fetchWeather } from "./utils/fetch";
 import Auth from './components/Auth';
+import Profile from './components/Profile';
+
+
 
 function App() {
   const [inputCity, setInputCity] = useState('');
-  const [weatherData, setWeatherData] = useState(null);
+  const [locationData, setLocationData] = useState(null);
+  const [currentWeather, setCurrentWeather] = useState(null);
+  const [dailyForecast, setDailyForecast] = useState(null);
+  const [hourlyForecast, setHourlyForecast] = useState(null);
   const [errorMessage, setErrorMessage] = useState('Search for a city');
   const [user, setUser] = useState(null);
+
+  const [view, setView] = useState("today"); // "today" o "week"
+  const handleViewChange = (newView) => setView(newView);
+
+  const [currentView, setCurrentView] = useState("weather"); // "weather" o "profile"
 
   useEffect(() => {
     const auth = getAuth();
@@ -24,7 +37,7 @@ function App() {
           if (userDoc.exists()) {
             const userData = userDoc.data();
             if (userData.city) {
-              setInputCity(userData.city);
+              //setInputCity(userData.city);
               await fetchWeatherData(userData.city);
             }
           }
@@ -44,17 +57,16 @@ function App() {
 
     try {
       const locationData = await fetchLocation(city);
+      setLocationData(locationData);
       if (!locationData.lat || !locationData.lon) {
         setErrorMessage("City not found.");
         return;
       }
 
       const { weatherData, dailyForecastData, hourlyForecastData } = await fetchWeather(locationData);
-      setWeatherData({
-        currentData: weatherData,
-        dailyForecast: dailyForecastData,
-        hourlyForecast: hourlyForecastData
-      });
+      setCurrentWeather(weatherData);
+      setDailyForecast(dailyForecastData);
+      setHourlyForecast(hourlyForecastData);
     } catch (error) {
       console.error("Error:", error);
       setErrorMessage("An error occurred while fetching data.");
@@ -68,58 +80,157 @@ function App() {
     }
 
     fetchWeatherData(inputCity);
+    setInputCity('');
   };
+
+
 
   return (
     <div className="App">
-      { user ? (
+      {!user ? (
 
-        <div className="layout">
-          <header className="header">
-            <form
-              className="search-form"
-              onSubmit={(event) => {
-                event.preventDefault();
-                handleSearch();
-              }}
-            >
-              <input
-                type="text"
-                placeholder="Cerca città..."
-                value={inputCity}
-                onChange={(event) => setInputCity(event.target.value)}
-              />
-            </form>
-            <div className="profile-icon">👤</div>
-          </header>
-
-          <aside className="sidebar">
-            <div className="sidebar-element"></div>
-          </aside>
-
-          <div className="container">
-            {errorMessage ? (
-              <p className="error-message">{errorMessage}</p>
-            ) : (
-              <>
-                <div id="block-1" className="block block-a">
-                  {weatherData && <p>{weatherData.currentData.weather[0].main}, {weatherData.currentData.weather[0].description}, {weatherData.currentData.main.temp}°C</p>}
-                </div>
-
-                <div id="block-2" className="block block-a">
-                  {weatherData && weatherData.hourlyForecast.list.slice(0, 7).map((item, index) => (
-                    <p key={index}>{Math.round(item.main.temp)}, </p>
-                  ))}
-                </div>
-              </>
-            )}
-          </div>
-        </div>
-
-      ) : (
-
+        // If user is not authenticated, show the Auth component
         <Auth />
 
+      ) : (
+        currentView === "profile" ? (
+
+          // If user is authenticated and current view is profile, show the Profile component
+          <Profile user={user} onBack={() => setCurrentView("weather")} />
+
+        ) : (
+
+          // This is the main weather component
+          <div className="layout">
+
+            <aside className="sidebar">
+
+              <form
+                className="search-form"
+                onSubmit={(event) => {
+                  event.preventDefault();
+                  handleSearch();
+                }}
+                >
+                <input
+                  type="text"
+                  placeholder="🔍  Search places"
+                  value={inputCity}
+                  onChange={(event) => setInputCity(event.target.value)}
+                />
+                </form>
+
+                {locationData && <h3>{locationData.city}, {locationData.state || locationData.country}</h3>}
+
+                <p>{new Date().toLocaleDateString('en-US', { weekday: 'long' })}, {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}</p>
+
+                <img src={sample} alt="Illustration" className="sidebar-illustration" />
+
+                {currentWeather && <h1>{Math.round(currentWeather.main.temp)}°C</h1>}
+
+                <p><strong>{currentWeather && currentWeather.weather[0].description
+                  .split(' ')
+                  .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                  .join(' ')}
+                </strong></p>
+
+                <p className='comment'>Qui ci sarà un divertente commento del signor RainBuddy</p>
+
+              </aside>
+
+              <section className="content">
+                {errorMessage ? (
+                <p className="error-message">{errorMessage}</p>
+                ) : (
+                <>              
+
+                  <div className="tabs">
+                  <button 
+                    className={view === "today" ? "active" : ""}
+                    onClick={() => handleViewChange("today")}>Today</button>
+                  <button 
+                    className={view === "week" ? "active" : ""}
+                    onClick={() => handleViewChange("week")}>Week</button>
+                  <button 
+                    className="profile-button"
+                    onClick={() => setCurrentView("profile")}>👤  Profile</button>
+                  </div>
+
+                  <div className="weather-cards">
+                  {view === "today" ? (
+                    <div className="hourly-cards">
+                    {hourlyForecast && hourlyForecast.list.map((hour, index) => (
+                      <div key={index} className="forecast-card">
+                      <h3>{new Date(hour.dt * 1000).toLocaleTimeString([], { hour: '2-digit', hour12: false })}</h3>
+                      <img 
+                        src={`https://openweathermap.org/img/wn/${hour.weather[0].icon}.png`} 
+                        alt={hour.weather[0].description} 
+                      />
+                      <p><strong>{Math.round(hour.main.temp)}°</strong></p>
+                      </div>
+                    ))}
+                    </div>
+                  ) : (
+                    <div className="daily-cards">
+                    {dailyForecast && dailyForecast.list.map((day, index) => {
+                          const date = new Date(day.dt * 1000);
+                          const weekday = date.toLocaleDateString('en-US', { weekday: 'short' });
+                          return (
+                            <div key={index} className="forecast-card">
+                              <h3>{weekday}</h3>
+                              <img 
+                                src={`https://openweathermap.org/img/wn/${day.weather[0].icon}.png`} 
+                                alt={day.weather[0].description} 
+                              />
+                              <p><strong>{Math.round(day.temp.max)}°</strong> {Math.round(day.temp.min)}°</p>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+
+                  <h1>Today Highlight</h1>
+
+                  <div className="weather-details">
+                    {currentWeather && (
+                      <div className="weather-details-grid">
+                        <div className="detail-card">
+                          <h4>Humidity</h4>
+                          <p>{currentWeather.main.humidity}%</p>
+                        </div>
+                        <div className="detail-card">
+                          <h4>Wind Speed</h4>
+                          <p>{Math.round(currentWeather.wind.speed * 3.6)} km/h</p>
+                        </div>
+                        <div className="detail-card">
+                          <h4>Pressure</h4>
+                          <p>{currentWeather.main.pressure} hPa</p>
+                        </div>
+                        <div className="detail-card">
+                          <h4>Feels Like</h4>
+                          <p>{Math.round(currentWeather.main.feels_like)}°C</p>
+                        </div>
+                        <div className="detail-card">
+                          <h4>Visibility</h4>
+                          <p>{(currentWeather.visibility / 1000).toFixed(1)} km</p>
+                        </div>
+                        <div className="detail-card">
+                          <h4>Cloudiness</h4>
+                          <p>{currentWeather.clouds.all}%</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                </>
+              )}
+            </section>
+
+          </div>
+          // End of main weather component
+
+        )
       )}
     </div>
   );

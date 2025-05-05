@@ -1,0 +1,251 @@
+body, html, .App { 
+  margin: 0; 
+  padding: 0; 
+  height: 100vh; 
+  width: 100%; 
+  /*font-family: -apple-system, BlinkMacSystemFont, sans-serif;*/
+  font-family: 'Quicksand', sans-serif;
+}
+
+/*:root {
+  --primary-color: #e59866;
+  --secondary-color: #fff;
+  --background-color: #fdf2e9;
+}*/
+
+:root {
+  --primary-color: #6598d8;
+  --secondary-color: #fff;
+  --background-color: #fafafa;
+}
+
+
+
+/* Layout components */
+.layout {
+  display: flex;
+  min-height: 100vh;
+  background: var(--background-color);
+}
+
+.sidebar {
+  width: 250px;
+  padding: 20px;
+  background-color: var(--secondary-color);
+  display: flex;
+  flex-direction: column;
+}
+
+.search-form {
+  display: flex;
+  align-items: center;
+}
+
+.search-form input {
+  margin: 0;
+  background-color: var(--background-color);
+  padding: 0.8rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  width: 100%; /* Make the input as wide as its parent */
+}
+
+.content {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+
+
+/* Sidebar */
+
+.sidebar h1 {
+  font-size: 2.5rem;
+  margin: 15px 0 0 0;
+}
+
+.sidebar h3 {
+  margin: 25px 0 0 0;
+}
+
+.sidebar p {
+  margin: 15px 0 15px 0;
+}
+
+.sidebar p.comment {
+  margin: 0 0 15px 0;
+}
+
+
+
+
+/* Tab navigation */
+.tabs {
+  display: flex;
+  margin-bottom: 20px;
+  margin-top: auto;
+  /*justify-content: space-between; /* Separa i pulsanti left/right */
+}
+
+.tabs button {
+  background: none;
+  border: none;
+  padding: 12px;
+  cursor: pointer;
+  color: #666;
+  font-size: 1rem;
+}
+
+.tabs button.active {
+  font-weight: bold;
+  color: var(--primary-color);
+}
+
+.tabs .profile-button {
+  margin-left: auto; /* Spinge il pulsante profilo a destra */
+  margin-right: 0px;
+  background-color: white;
+  padding: 0 20px 0 20px;
+  border-radius: 4px;
+}
+
+.tabs .profile-button:hover {
+  background-color: var(--primary-color); /* Colore di sfondo al passaggio del mouse */
+}
+
+
+
+/* Weather cards */
+.hourly-cards, .daily-cards {
+  display: flex;
+  gap: 15px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.hourly-cards::-webkit-scrollbar, .daily-cards::-webkit-scrollbar {
+  display: none;
+}
+
+.forecast-card {
+  width: 180px;
+  height: 120px;
+  padding: 15px;
+  background-color: #fff;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.forecast-card * { margin: 5px 0; }
+.forecast-card img { width: 50px; height: 50px; }
+.error-message { color: #ff6b6b; font-style: italic; }
+
+
+
+/* Weather details */
+
+.weather-details-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.detail-card {
+  background-color: #fff;
+  border-radius: 4px;
+  padding: 1rem;
+  text-align: center;
+}
+
+detail-card h4 {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.9rem;
+  color: #888;
+}
+
+detail-card p {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 500;
+}
+
+
+
+
+
+
+/* Media query per smartphone */
+@media (max-width: 768px) {
+  .layout {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .sidebar {
+    width: 100%;
+    max-width: 100%;
+    padding: 0px;
+    align-items: center;
+  }
+
+  .search-form {
+    width: 100%;
+  }
+
+  .search-form input {
+    margin: 20px;
+  }
+
+  .sidebar h3, h1 {
+    margin: 0 20px 0 20px;
+  }
+
+  .sidebar-illustration {
+    width: 80%;
+    max-width: 300px;
+  }
+
+  .sidebar p {
+    margin: 20px;
+  }
+
+  .sidebar p.comment {
+    margin: 0 20px 25px 20px;
+  }
+
+  .tabs {
+    margin: 20px;
+  }
+
+  .weather-cards {
+    padding: 20px;
+  }
+
+  .weather-details-grid{
+    margin: 20px;
+  }
+
+  .content h1{
+    margin: 20px;
+  }
+
+  .content {
+    width: 100%;
+    padding: 0px;
+    align-items: center;
+  }
+
+  /* Adattamento per le card su piccoli schermi */
+  .weather-details-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .weather-details-grid {
+    grid-template-columns: 1fr;
+  }
+}

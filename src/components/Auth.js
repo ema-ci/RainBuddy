@@ -1,4 +1,5 @@
 import './Auth.css';
+
 import React, { useState } from 'react';
 import { auth } from '../FirebaseConfig';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
@@ -46,32 +47,33 @@ function Auth() {
       <div className="form-container">
         <h2>{isRegistering ? 'Register' : 'Login'}</h2>
         <form onSubmit={handleSubmit}>
+          <label>Email</label>
           <input
             type="email"
-            placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
           />
+          <label>Password</label>
           <input
             type="password"
-            placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
           />
           {isRegistering && (
             <>
+              <hr></hr>
+              <label>Name</label>
               <input
                 type="text"
-                placeholder="Name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
               />
+              <label>City</label>
               <input
                 type="text"
-                placeholder="City"
                 value={city}
                 onChange={(e) => setCity(e.target.value)}
                 required

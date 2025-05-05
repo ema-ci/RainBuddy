@@ -7,7 +7,9 @@ export const fetchLocation = async (city) => {
     const locationUrl = `https://api.openweathermap.org/geo/1.0/direct?q=${city}&limit=5&appid=${API_KEY}`;
     let locationData = {
         lat: null,
-        lon: null
+        lon: null,
+        city: null, 
+        state: null
     };
 
     try {
@@ -20,14 +22,17 @@ export const fetchLocation = async (city) => {
         } else {
             locationData = {
                 lat: data[0].lat,
-                lon: data[0].lon
+                lon: data[0].lon,
+                city: data[0].name,
+                state: data[0].state,
+                country: data[0].country
             };
         }
     } catch (error) {
         console.error("Error fetching location data:", error.message);
     }
 
-    return locationData; // Returns latitude and longitude
+    return locationData;
 };
 
 // Function to fetch weather data (current weather, forecast, and hourly forecast) based on location data
@@ -63,7 +68,7 @@ export const fetchWeather = async (locationData) => {
         hourlyForecastData = hourlyForecastResponse.data;
 
         console.log("Current Weather Data:", weatherData);
-        console.log("Forecast Data:", dailyForecastData);
+        console.log("Daily Forecast Data:", dailyForecastData);
         console.log("Hourly Forecast Data:", hourlyForecastData);
     } catch (error) {
         console.error("Error fetching weather data:", error.message);
@@ -71,5 +76,3 @@ export const fetchWeather = async (locationData) => {
 
     return { weatherData, dailyForecastData, hourlyForecastData };
 };
-
-//export default { fetchLocation, fetchWeather };
