@@ -21,8 +21,10 @@
 
 .form-container hr {
     margin: 20px;
+    margin-left: 0;
+    margin-right: 0;
     border: none;
-    border-top: 1px solid var(--background-color)
+    border-top: 1px solid var(--secondary-color)
 }
 
 .form-container input {

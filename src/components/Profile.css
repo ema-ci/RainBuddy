@@ -4,7 +4,7 @@
   padding: 20px;
 }
 
-.back-button, .save-button, .delete-button, .delete-confirm-button, .cancel-button {
+.back-button, .save-button, .delete-button, .delete-confirm-button, .cancel-button, .logout-button {
   background: none;
   border: none;
   padding: 12px;
@@ -15,7 +15,7 @@
 }
 
 .back-button {
-  background: var(--background-color);
+  background: var(--secondary-color);
   color: black;
   border: none;
   cursor: pointer;
@@ -69,7 +69,17 @@
 
 .danger-zone {
   margin-top: 30px;
-  border-top: 1px solid var(--background-color);
+  border-top: 1px solid var(--secondary-color);
+}
+
+.logout-button {
+  background: var(--secondary-color);
+  color: black;
+  border: none;
+  padding: 10px 15px;
+  margin-left: 20px;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
 .delete-button {

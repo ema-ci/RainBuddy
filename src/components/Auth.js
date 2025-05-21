@@ -14,7 +14,7 @@ function Auth() {
   const [name, setName] = useState('');
   const [city, setCity] = useState('');
   const [dailyNotification, setDailyNotification] = useState(false);
-  const [notificationTime, setNotificationTime] = useState('');
+  //const [notificationTime, setNotificationTime] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -29,7 +29,7 @@ function Auth() {
           name,
           city,
           dailyNotification,
-          notificationTime: dailyNotification ? notificationTime : null,
+          //notificationTime: dailyNotification ? notificationTime : null,
         });
 
         //alert('Registration successful!');
@@ -78,7 +78,7 @@ function Auth() {
                 onChange={(e) => setCity(e.target.value)}
                 required
               />
-              <label>
+              {/*<label>
                 <input
                   type="checkbox"
                   checked={dailyNotification}
@@ -86,14 +86,14 @@ function Auth() {
                 />
                 Receive daily notification?
               </label>
-              {dailyNotification && (
+              dailyNotification && (
                 <input
                   type="time"
                   value={notificationTime}
                   onChange={(e) => setNotificationTime(e.target.value)}
                   required
                 />
-              )}
+              )*/}
             </>
           )}
           <button type="submit">{isRegistering ? 'Register' : 'Login'}</button>
