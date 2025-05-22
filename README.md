@@ -29,7 +29,9 @@ some commands:
 `firebase deploy`
 `firebase deploy --only hosting`
 
+`git branch` see branches
+`git checkout name_branch` switch to a different branch
+
 `git add .`
-`git branch`
-`git commit -m ""`
-`git checkout name_branch`
+`git commit -m ""` commit with message
+`git push` send to remote

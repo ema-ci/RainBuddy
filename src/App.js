@@ -23,7 +23,7 @@ function App() {
     const [errorMessage, setErrorMessage] = useState('Search for a city');
     const [user, setUser] = useState(null);
 
-    const [view, setView] = useState("today"); // "today" o "week"
+    const [view, setView] = useState("today"); // "today" o "week"  FORECAST VIEW
     const handleViewChange = (newView) => setView(newView);
 
     const [currentView, setCurrentView] = useState("weather"); // "weather" o "profile"

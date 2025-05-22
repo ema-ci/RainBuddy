@@ -14,6 +14,11 @@ body, html, .App {
   --text-color: #333;
 }
 
+.App {
+  animation: fadeIn 0.5s ease-in-out;
+  background-color: var(--background-color);
+}
+
 
 
 /* Layout components */
@@ -236,7 +241,9 @@ detail-card p {
   .content {
     width: 100%;
     padding: 0px;
-    align-items: center;
+    /* Remove align-items: center; */
+    display: block; /* Ensure block layout */
+    min-height: 100vh; /* Prevent collapse */
   }
 
   /* Adattamento per le card su piccoli schermi */

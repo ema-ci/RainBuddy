@@ -13,8 +13,6 @@ function Auth() {
   const [error, setError] = useState('');
   const [name, setName] = useState('');
   const [city, setCity] = useState('');
-  const [dailyNotification, setDailyNotification] = useState(false);
-  //const [notificationTime, setNotificationTime] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -28,8 +26,6 @@ function Auth() {
         await setDoc(doc(db, 'users', user.uid), {
           name,
           city,
-          dailyNotification,
-          //notificationTime: dailyNotification ? notificationTime : null,
         });
 
         //alert('Registration successful!');
@@ -78,22 +74,6 @@ function Auth() {
                 onChange={(e) => setCity(e.target.value)}
                 required
               />
-              {/*<label>
-                <input
-                  type="checkbox"
-                  checked={dailyNotification}
-                  onChange={(e) => setDailyNotification(e.target.checked)}
-                />
-                Receive daily notification?
-              </label>
-              dailyNotification && (
-                <input
-                  type="time"
-                  value={notificationTime}
-                  onChange={(e) => setNotificationTime(e.target.value)}
-                  required
-                />
-              )*/}
             </>
           )}
           <button type="submit">{isRegistering ? 'Register' : 'Login'}</button>

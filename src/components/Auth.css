@@ -38,7 +38,7 @@
 .form-container button {
     padding: 0.8rem;
     background-color: var(--primary-color);
-    color: var(--secondary-color);
+    color: var(--white-color);
     border: none;
     border-radius: 4px;
     font-size: 1rem;

@@ -3,9 +3,7 @@ import './Profile.css';
 import React, { useState, useEffect } from 'react';
 import { doc, getDoc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { db, generateToken } from '../FirebaseConfig';
-import { getAuth, signOut, deleteUser, EmailAuthProvider, reauthenticateWithCredential, validatePassword } from 'firebase/auth';
-
-const VAPID_KEY = process.env.REACT_APP_VAPID_KEY;
+import { getAuth, signOut, deleteUser, EmailAuthProvider, reauthenticateWithCredential } from 'firebase/auth';
 
 function Profile({ user, onBack }) {
 	const [userData, setUserData] = useState({
@@ -16,7 +14,7 @@ function Profile({ user, onBack }) {
 	const [message, setMessage] = useState('');
 	const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 	const [password, setPassword] = useState(''); // Stato per la password
-	const [notificationPermission, setNotificationPermission] = useState(Notification.permission);
+	const [notificationPermission, setNotificationPermission] = useState('unsupported');
 
 	useEffect(() => {
 		const fetchUserData = async () => {
@@ -37,23 +35,36 @@ function Profile({ user, onBack }) {
 			}
 		};
 
-		setNotificationPermission(Notification.permission);
+		// Check for Notification API support
+        if (typeof Notification !== 'undefined') {
+            setNotificationPermission(Notification.permission);
+        } else {
+            setNotificationPermission('unsupported');
+        }
 		fetchUserData();
 	}, [user.uid]);
 
 
 	
 	const handleChange = async (e) => {
-		const { name, value, type, checked } = e.target;
+		const { name, value } = e.target;
 
 		if (name === 'dailyNotification') {
+			if (notificationPermission === 'unsupported') {
+				setMessage("Notification not supported in this browser");
+				return;
+			}
+			
 			// Richiedi permesso e stampa sempre il token
 			const permission = await Notification.requestPermission();
+
 			if (permission === 'granted') {
 				generateToken();
 				setMessage("Notifications allowed! to disable check your browser settings");
+				setNotificationPermission(permission);
 			} else {
 				setMessage("Notification not allowed, check your browser settings");
+				setNotificationPermission(permission);
 			}
 			return;
 		}
