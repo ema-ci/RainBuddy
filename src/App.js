@@ -23,9 +23,7 @@ function App() {
     const [errorMessage, setErrorMessage] = useState('Search for a city');
     const [user, setUser] = useState(null);
 
-    const [view, setView] = useState("today"); // "today" o "week"  FORECAST VIEW
-    const handleViewChange = (newView) => setView(newView);
-
+    const [forecastView, setForecastView] = useState("today"); // "today" o "week"
     const [currentView, setCurrentView] = useState("weather"); // "weather" o "profile"
 
     // Foreground notifications
@@ -104,7 +102,7 @@ function App() {
     }
 
     if (currentView === "profile") {
-        // If user is authenticated and current view is profile, show the Profile component
+        // Go to the profile page passing the user data
         return <Profile user={user} onBack={() => setCurrentView("weather")} />;
     }
 
@@ -171,18 +169,18 @@ function App() {
                         <>              
                             <div className="tabs">
                                 <button 
-                                    className={view === "today" ? "active" : ""}
-                                    onClick={() => handleViewChange("today")}>Today</button>
+                                    className={forecastView === "today" ? "active" : ""}
+                                    onClick={() => setForecastView("today")}>Today</button>
                                 <button 
-                                    className={view === "week" ? "active" : ""}
-                                    onClick={() => handleViewChange("week")}>Week</button>
+                                    className={forecastView === "week" ? "active" : ""}
+                                    onClick={() => setForecastView("week")}>Week</button>
                                 <button 
                                     className="profile-button"
                                     onClick={() => setCurrentView("profile")}>👤  Profile</button>
                             </div>
 
                             <div className="weather-cards">
-                                {view === "today" ? (
+                                {forecastView === "today" ? (
                                     <div className="hourly-cards">
                                         {hourlyForecast && hourlyForecast.list.map((hour, index) => (
                                             <div key={index} className="forecast-card">
@@ -220,33 +218,106 @@ function App() {
                             <div className="weather-details">
                                 {currentWeather && (
                                     <div className="weather-details-grid">
+                                        
+                                        {/* Rain */}
                                         <div className="detail-card">
-                                            <h4>Humidity</h4>
-                                            <p>{currentWeather.main.humidity}%</p>
+                                            <span className="detail-title">Rain</span>
+                                            <div className="detail-main">
+                                                <span className="detail-value">
+                                                    {currentWeather.rain && currentWeather.rain['1h'] ? currentWeather.rain['1h'] : 0}
+                                                </span>
+                                                <span className="detail-unit">mm/h</span>
+                                            </div>
+                                            <div className="detail-status">
+                                                {currentWeather.rain && currentWeather.rain['1h'] > 0 ? "Rainy" : "No rain"}
+                                            </div>
                                         </div>
+                                    
+                                        {/* Wind Speed */}
                                         <div className="detail-card">
-                                            <h4>Wind Speed</h4>
-                                            <p>{Math.round(currentWeather.wind.speed * 3.6)} km/h</p>
+                                            <span className="detail-title">Wind Speed</span>
+                                            <div className="detail-main">
+                                                <span className="detail-value">
+                                                    {Math.round(currentWeather.wind.speed * 3.6)}
+                                                </span>
+                                                <span className="detail-unit">km/h</span>
+                                            </div>
+                                            <div className="detail-status">
+                                                {Math.round(currentWeather.wind.speed * 3.6) > 30 ? "Windy" : "Calm"}
+                                            </div>
                                         </div>
+                                    
+                                        {/* Sunrise & Sunset */}
                                         <div className="detail-card">
-                                            <h4>Pressure</h4>
-                                            <p>{currentWeather.main.pressure} hPa</p>
+                                            <span className="detail-title">Sunrise & Sunset</span>
+                                            <div className="sun-time">
+                                                <div className="sun-time-text">
+                                                    ☀️ {new Date(currentWeather.sys.sunrise * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}
+                                                </div>
+                                                <div className="sun-time-text">
+                                                    🌙 {new Date(currentWeather.sys.sunset * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}
+                                                </div>
+                                            </div>
                                         </div>
+                                    
+                                        {/* Visibility */}
                                         <div className="detail-card">
-                                            <h4>Feels Like</h4>
-                                            <p>{Math.round(currentWeather.main.feels_like)}°C</p>
+                                            <span className="detail-title">Visibility</span>
+                                            <div className="detail-main">
+                                                <span className="detail-value">
+                                                    {(currentWeather.visibility / 1000).toFixed(1)}
+                                                </span>
+                                                <span className="detail-unit">km</span>
+                                            </div>
+                                            <div className="detail-status">
+                                                {currentWeather.visibility >= 10000
+                                                    ? "Clear"
+                                                    : currentWeather.visibility >= 4000
+                                                    ? "Moderate"
+                                                    : "Poor"}
+                                            </div>
                                         </div>
+                                    
+                                        {/* Clouds */}
                                         <div className="detail-card">
-                                            <h4>Visibility</h4>
-                                            <p>{(currentWeather.visibility / 1000).toFixed(1)} km</p>
+                                            <span className="detail-title">Clouds</span>
+                                            <div className="detail-main">
+                                                <span className="detail-value">
+                                                    {currentWeather.clouds.all}
+                                                </span>
+                                                <span className="detail-unit">%</span>
+                                            </div>
+                                            <div className="detail-status">
+                                                {currentWeather.clouds.all < 20
+                                                    ? "Clear sky"
+                                                    : currentWeather.clouds.all < 60
+                                                    ? "Partly cloudy"
+                                                    : "Cloudy"}
+                                            </div>
                                         </div>
+                                    
+                                        {/* Humidity */}
                                         <div className="detail-card">
-                                            <h4>Cloudiness</h4>
-                                            <p>{currentWeather.clouds.all}%</p>
+                                            <span className="detail-title">Humidity</span>
+                                            <div className="detail-main">
+                                                <span className="detail-value">
+                                                    {currentWeather.main.humidity}
+                                                </span>
+                                                <span className="detail-unit">%</span>
+                                            </div>
+                                            <div className="detail-status">
+                                                {currentWeather.main.humidity < 30
+                                                    ? "Dry"
+                                                    : currentWeather.main.humidity < 60
+                                                    ? "Comfortable"
+                                                    : "Humid"}
+                                            </div>
                                         </div>
+                                    
                                     </div>
                                 )}
                             </div>
+
                         </>
 
                     )}

@@ -9,6 +9,7 @@ body, html, .App {
 :root {
   --primary-color: #6598d8;
   --secondary-color: #e2e2e2;
+  --tertiary-color: #888;
   --white-color: #fff;
   --background-color: #fafafa;
   --text-color: #333;
@@ -163,21 +164,73 @@ body, html, .App {
   background-color: #fff;
   border-radius: 4px;
   padding: 1rem;
-  text-align: center;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  height: 140px;
+  position: relative;
 }
 
-detail-card h4 {
-  margin: 0 0 0.5rem 0;
-  font-size: 0.9rem;
-  color: #888;
-}
-
-detail-card p {
-  margin: 0;
-  font-size: 1.4rem;
+.detail-title {
+  color: var(--text-color);
+  font-size: 1rem;
   font-weight: 500;
+  letter-spacing: 0.5px;
 }
 
+.detail-main {
+  display: flex;
+  margin-top: 1.5rem;
+}
+
+.detail-value {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--text-color);
+  line-height: 1;
+}
+
+.detail-unit {
+  color: var(--text-color);
+  font-size: 1rem;
+  margin-left: 0.4rem;
+  align-self: flex-end;
+  text-align: left;
+}
+
+.detail-status {
+  margin-top: auto;
+  font-size: 1rem;
+  color: var(--tertiary-color);
+  font-weight: 500;
+  padding-bottom: 0.2rem;
+}
+
+.sun-time {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.sun-time-text {
+  color: var(--text-color);
+  font-weight: 600;
+  font-size: 1.6em;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .weather-details-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .weather-details-grid {
+    grid-template-columns: 1fr;
+  }
+}
 
 
 

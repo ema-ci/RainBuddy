@@ -67,7 +67,7 @@ export const fetchWeather = async (locationData) => {
         dailyForecastData = dailyForecastResponse.data;
         hourlyForecastData = hourlyForecastResponse.data;
 
-        //console.log("Current Weather Data:", weatherData);
+        console.log("Current Weather Data:", weatherData);
         //console.log("Daily Forecast Data:", dailyForecastData);
         //console.log("Hourly Forecast Data:", hourlyForecastData);
     } catch (error) {

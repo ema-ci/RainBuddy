@@ -6,7 +6,6 @@ Try it!  ->  https://rainbuddy-eb5e6.web.app/
 
 # Technical Stack:
 - Frontend: React.js and CSS
-- Data Visualization: Charting library
 - Backend: Firebase (Authentication, Realtime Database, Cloud Messaging)
 
 # Features:
