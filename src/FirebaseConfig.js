@@ -21,6 +21,8 @@ export const db = getFirestore(app);
 export const messaging = getMessaging(app);
 
 export const VAPID_KEY = process.env.REACT_APP_VAPID_KEY;
+
+// Function to request notification permission and generate FCM token
 export const generateToken = async () => {
   try {
     const permission = await Notification.requestPermission();

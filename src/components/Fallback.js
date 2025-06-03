@@ -1,5 +1,5 @@
 import React from 'react';
-import './Fallback.css'; // Puoi creare uno stile personalizzato per questa pagina
+import './Fallback.css';
 
 function Fallback() {
   return (

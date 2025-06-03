@@ -23,6 +23,7 @@ body, html, .App {
 
 
 /* Layout components */
+
 .layout {
   display: flex;
   min-height: 100vh;
@@ -30,7 +31,7 @@ body, html, .App {
 }
 
 .sidebar {
-  width: 250px;
+  width: 300px;
   padding: 20px;
   background-color: var(--white-color);
   display: flex;
@@ -89,6 +90,7 @@ body, html, .App {
 
 
 /* Tab navigation */
+
 .tabs {
   display: flex;
   margin-bottom: 20px;
@@ -105,7 +107,7 @@ body, html, .App {
 }
 
 .tabs button:hover {
-  background-color: var(--secondary-color); /* Colore di sfondo al passaggio del mouse */
+  background-color: var(--secondary-color);
   transition: background-color 0.3s ease;
   border-radius: 4px;
 }
@@ -116,7 +118,7 @@ body, html, .App {
 }
 
 .tabs .profile-button {
-  margin-left: auto; /* Spinge il pulsante profilo a destra */
+  margin-left: auto; /* Move to the right */
   margin-right: 0px;
   background-color: white;
   padding: 0 20px 0 20px;
@@ -126,6 +128,7 @@ body, html, .App {
 
 
 /* Weather cards */
+
 .hourly-cards, .daily-cards {
   display: flex;
   gap: 15px;
@@ -140,6 +143,7 @@ body, html, .App {
 
 .forecast-card {
   width: 180px;
+  min-width: 60px;
   height: 120px;
   padding: 15px;
   background-color: #fff;
@@ -153,6 +157,11 @@ body, html, .App {
 
 
 /* Weather details */
+
+.content h1 {
+  font-size: 1.4rem;
+  margin: 30px 10px 20px 10px;
+}
 
 .weather-details-grid {
   display: grid;
@@ -216,27 +225,12 @@ body, html, .App {
 .sun-time-text {
   color: var(--text-color);
   font-weight: 600;
-  font-size: 1.6em;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .weather-details-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
-@media (max-width: 480px) {
-  .weather-details-grid {
-    grid-template-columns: 1fr;
-  }
+  font-size: 1.4em;
 }
 
 
 
-
-
-/* Media query per smartphone */
+/* Media query for medium to small screens */
 @media (max-width: 768px) {
   .layout {
     flex-direction: column;
@@ -269,6 +263,7 @@ body, html, .App {
 
   .sidebar p {
     margin: 20px;
+    text-align: center;
   }
 
   .sidebar p.comment {
@@ -299,13 +294,14 @@ body, html, .App {
     min-height: 100vh; /* Prevent collapse */
   }
 
-  /* Adattamento per le card su piccoli schermi */
   .weather-details-grid {
     grid-template-columns: 1fr 1fr;
   }
+
 }
 
-@media (max-width: 480px) {
+/* Media query for very small screens */
+@media (max-width: 300px) {
   .weather-details-grid {
     grid-template-columns: 1fr;
   }

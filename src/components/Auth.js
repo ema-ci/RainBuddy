@@ -1,10 +1,12 @@
 import './Auth.css';
+import logo from '../assets/logo.png';
+import github from '../assets/github.png';
 
 import React, { useState } from 'react';
 import { auth } from '../FirebaseConfig';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
-import { db } from '../FirebaseConfig'; // Import Firestore
-import { doc, setDoc } from 'firebase/firestore'; // Firestore methods
+import { db } from '../FirebaseConfig';
+import { doc, setDoc } from 'firebase/firestore';
 
 function Auth() {
   const [email, setEmail] = useState('');
@@ -14,25 +16,30 @@ function Auth() {
   const [name, setName] = useState('');
   const [city, setCity] = useState('');
 
+  // Handle form submission for login or registration
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     try {
+
       if (isRegistering) {
+        // Register new user
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
 
-        // Save additional data to Firestore
+        // Save additional data
         await setDoc(doc(db, 'users', user.uid), {
           name,
           city,
         });
-
         //alert('Registration successful!');
+
       } else {
+        // Login existing user
         await signInWithEmailAndPassword(auth, email, password);
         //alert('Login successful!');
       }
+
     } catch (err) {
       setError(err.message);
     }
@@ -40,6 +47,9 @@ function Auth() {
 
   return (
     <div className="landing-page">
+
+      <img src={logo} alt="Logo" className="logo" />
+
       <div className="form-container">
         <h2>{isRegistering ? 'Register' : 'Login'}</h2>
         <form onSubmit={handleSubmit}>
@@ -86,6 +96,11 @@ function Auth() {
           </span>
         </p>
       </div>
+          
+      <a href="https://github.com/ema-ci/RainBuddy" target="_blank" rel="noopener noreferrer">
+        <img src={github} alt="GitHub" className="github-logo" />
+      </a>
+
     </div>
   );
 }

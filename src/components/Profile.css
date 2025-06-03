@@ -22,10 +22,6 @@
   font-size: 16px;
 }
 
-.form-group {
-  margin-bottom: 15px;
-}
-
 .form-group form {
   display: flex;
   flex-direction: column;
@@ -70,6 +66,12 @@
 .danger-zone {
   margin-top: 30px;
   border-top: 1px solid var(--secondary-color);
+  margin-bottom: 30px;
+}
+
+.report-zone {
+  margin-top: 30px;
+  border-top: 1px solid var(--secondary-color);
 }
 
 .logout-button {
@@ -78,6 +80,7 @@
   border: none;
   padding: 10px 15px;
   margin-left: 20px;
+  margin-top: 10px;
   border-radius: 4px;
   cursor: pointer;
 }
@@ -102,15 +105,18 @@
   color: white;
   border: none;
   padding: 10px 15px;
+  margin-top: 10px;
   margin-right: 10px;
   border-radius: 4px;
   cursor: pointer;
 }
 
 .cancel-button {
-  background: #ccc;
+  background: var(--secondary-color);
+  color: black;
   border: none;
   padding: 10px 15px;
   border-radius: 4px;
   cursor: pointer;
+  margin-top: 10px;
 }

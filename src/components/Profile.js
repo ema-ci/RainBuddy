@@ -1,7 +1,7 @@
 import './Profile.css';
 
 import React, { useState, useEffect } from 'react';
-import { doc, getDoc, updateDoc, deleteDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, updateDoc, deleteDoc, serverTimestamp } from 'firebase/firestore';
 import { db, generateToken } from '../FirebaseConfig';
 import { getAuth, signOut, deleteUser, EmailAuthProvider, reauthenticateWithCredential } from 'firebase/auth';
 
@@ -13,10 +13,14 @@ function Profile({ user, onBack }) {
 	const [isLoading, setIsLoading] = useState(true);
 	const [message, setMessage] = useState('');
 	const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-	const [password, setPassword] = useState(''); // Stato per la password
+	const [password, setPassword] = useState('');
 	const [notificationPermission, setNotificationPermission] = useState('unsupported');
+	const [reportText, setReportText] = useState('');
+	const [reportMessage, setReportMessage] = useState('');
 
 	useEffect(() => {
+
+		// Fetch user name and favourite city
 		const fetchUserData = async () => {
 			try {
 				const userDoc = await getDoc(doc(db, 'users', user.uid));
@@ -35,17 +39,17 @@ function Profile({ user, onBack }) {
 			}
 		};
 
-		// Check for Notification API support
+		// Check for Notification support and permission
         if (typeof Notification !== 'undefined') {
             setNotificationPermission(Notification.permission);
         } else {
             setNotificationPermission('unsupported');
         }
+
 		fetchUserData();
 	}, [user.uid]);
 
-
-	
+	// Handle input changes (form fields and notification checkbox)
 	const handleChange = async (e) => {
 		const { name, value } = e.target;
 
@@ -55,7 +59,7 @@ function Profile({ user, onBack }) {
 				return;
 			}
 			
-			// Richiedi permesso e stampa sempre il token
+			// Request permission and always print the token
 			const permission = await Notification.requestPermission();
 
 			if (permission === 'granted') {
@@ -68,12 +72,14 @@ function Profile({ user, onBack }) {
 			}
 			return;
 		}
+
 		setUserData(prev => ({
 			...prev,
 			[name]: value
 		}));
 	};
 
+	// Handle form submission to update user data
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		setIsLoading(true);
@@ -93,32 +99,50 @@ function Profile({ user, onBack }) {
 		}
 	};
 
+	// Handle report submission
+	const handleReportSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            await setDoc(doc(db, 'reports', user.uid), {
+                report: reportText,
+				createdAt: serverTimestamp()
+            });
+            setReportMessage('Report submitted successfully!');
+            setReportText('');
+        } catch (error) {
+            console.error("Error submitting report:", error);
+            setReportMessage('Failed to submit report.');
+        }
+    };
+
+	// Handle user logout
 	const handleLogout = async () => {
 		try {
 			const auth = getAuth();
 			await signOut(auth);
 			setMessage("Logged out successfully");
-			onBack(); // Torna alla schermata precedente o alla schermata di login
+			onBack(); // Go back to the previous page after logout
 		} catch (error) {
 			console.error("Error logging out:", error);
 			setMessage("Failed to log out");
 		}
 	};
 
+	// Handle account deletion
 	const handleDeleteAccount = async () => {
 		setIsLoading(true);
 		try {
 			const auth = getAuth();
 			const currentUser = auth.currentUser;
 
-			// Ri-autenticazione dell'utente
+			// Re-authenticate the user
 			const credential = EmailAuthProvider.credential(currentUser.email, password);
 			await reauthenticateWithCredential(currentUser, credential);
 
-			// Elimina i dati dell'utente da Firestore
+			// Delete user data
 			await deleteDoc(doc(db, 'users', user.uid));
 
-			// Elimina l'account di autenticazione dell'utente
+			// Delete the user's authentication account
 			await deleteUser(currentUser);
 
 			setMessage("Account deleted successfully");
@@ -178,6 +202,25 @@ function Profile({ user, onBack }) {
 					{message && <p className="message">{message}</p>}
 				</form>
 			)}
+
+			<div className="report-zone">
+				<h2>Report Issues</h2>
+				<p>If you encounter any issues, please report them to us.</p>
+
+				<form onSubmit={handleReportSubmit}>
+					<div className="form-group">
+						<input
+							placeholder="Describe the issue..."
+							value={reportText}
+							onChange={e => setReportText(e.target.value)}
+						/>
+					</div>
+					<button type="submit" className="save-button">Submit Report</button>
+					
+					{reportMessage && <p className="message">{reportMessage}</p>}
+                </form>
+
+			</div>
 
 			<div className="danger-zone">
 				<h2>Danger Zone</h2>

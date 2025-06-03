@@ -1,5 +1,8 @@
 import './App.css';
-import sample from './assets/sample.png';
+import rain from './assets/rain.png';
+import clouds from './assets/clouds.png';
+import snow from './assets/snow.png';
+import sun from './assets/sun.png';
 
 import { useState, useEffect } from 'react';
 import { getAuth, onAuthStateChanged } from "firebase/auth";
@@ -22,6 +25,7 @@ function App() {
     const [hourlyForecast, setHourlyForecast] = useState(null);
     const [errorMessage, setErrorMessage] = useState('Search for a city');
     const [user, setUser] = useState(null);
+    const [isOnline, setIsOnline] = useState(navigator.onLine);
 
     const [forecastView, setForecastView] = useState("today"); // "today" o "week"
     const [currentView, setCurrentView] = useState("weather"); // "weather" o "profile"
@@ -30,9 +34,25 @@ function App() {
     useEffect(() => {
         onMessage(messaging, (payload) => {
             console.log("Received message:", payload);
+            alert(`Notification: ${payload.notification.title}\n${payload.notification.body}`);
         });
     }, []);
 
+    // Check online status
+    useEffect(() => {
+        const handleOnline = () => setIsOnline(true);
+        const handleOffline = () => setIsOnline(false);
+
+        window.addEventListener('online', handleOnline);
+        window.addEventListener('offline', handleOffline);
+
+        return () => {
+            window.removeEventListener('online', handleOnline);
+            window.removeEventListener('offline', handleOffline);
+        };
+    }, []);
+
+    //fetch user data (location preference)
     useEffect(() => {
         const auth = getAuth();
         const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -44,8 +64,8 @@ function App() {
                     if (userDoc.exists()) {
                         const userData = userDoc.data();
                         if (userData.city) {
-                            //setInputCity(userData.city);
-                            await fetchWeatherData(userData.city);
+                            await fetchWeatherData(userData.city); 
+                            //setInputCity(userData.city); 
                         }
                     }
                 } catch (error) {
@@ -64,7 +84,14 @@ function App() {
 
         try {
             const locationData = await fetchLocation(city);
+
+            if (!locationData) {
+                setErrorMessage("City not found. Please check the spelling and try again.");
+                return;
+            }
+
             setLocationData(locationData);
+            
             if (!locationData.lat || !locationData.lon) {
                 setErrorMessage("City not found.");
                 return;
@@ -74,6 +101,7 @@ function App() {
             setCurrentWeather(weatherData);
             setDailyForecast(dailyForecastData);
             setHourlyForecast(hourlyForecastData);
+
         } catch (error) {
             console.error("Error:", error);
             setErrorMessage("An error occurred while fetching data.");
@@ -83,6 +111,7 @@ function App() {
     const handleSearch = async () => {
         if (inputCity.trim() === '') {
             setErrorMessage("Please enter a valid city name.");
+            setInputCity('');
             return;
         }
 
@@ -90,9 +119,54 @@ function App() {
         setInputCity('');
     };
 
+    const getWeatherVisuals = (main) => {
+        switch (main) {
+            case "Thunderstorm":
+                return {
+                    image: rain,
+                    message: "Thunder and lightning! Better stay indoors."
+                };
+            case "Atmosphere":
+                return {
+                    image: clouds,
+                    message: "Mysterious atmosphere... maybe a storm is coming."
+                };
+            case "Clouds":
+                return {
+                    image: clouds,
+                    message: "The sky’s rolling out its dramatic gray carpet."
+                };
+            case "Clear":
+                return {
+                    image: sun,
+                    message: "The sky is clear! even though the sun isn’t out, a nice walk would still be great."
+                };
+            case "Drizzle":
+                return {
+                    image: rain,
+                    message: "Light drizzle! It's better to have an umbrella handy."
+                };
+            case "Rain":
+                return {
+                    image: rain,
+                    message: "Meh, it's raining today. Don't forget your umbrella!"
+                };
+            case "Snow":
+                return {
+                    image: snow,
+                    message: "It's time to build a snowman!"
+                };
+            default:
+                return {
+                    image: sun,
+                    message: "Unknown weather... be ready for anything!"
+                };
+        }
+    };    
 
-    const isOnline = navigator.onLine; // Check at rendering if the user is online
+
     if (!isOnline) {
+        // If the user is offline, show the Fallback component
         return <Fallback />;
     }
 
@@ -102,7 +176,7 @@ function App() {
     }
 
     if (currentView === "profile") {
-        // Go to the profile page passing the user data
+        // Go to the profile page passing the user data (onBack to return to the weather view)
         return <Profile user={user} onBack={() => setCurrentView("weather")} />;
     }
 
@@ -139,19 +213,31 @@ function App() {
 
                             {locationData && <h3>{locationData.city}, {locationData.state || locationData.country}</h3>}
 
-                            <p>{new Date().toLocaleDateString('en-US', { weekday: 'long' })}, {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}</p>
+                            {currentWeather && (
+                                <>
+                                    <p>
+                                        {new Date((currentWeather.dt + currentWeather.timezone) * 1000).toLocaleDateString('en-US', { weekday: 'long', timeZone: 'UTC' })}
+                                        {", "}
+                                        {new Date((currentWeather.dt + currentWeather.timezone) * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'UTC' })}
+                                    </p>
 
-                            <img src={sample} alt="Illustration" className="sidebar-illustration" />
+                                    <img src={getWeatherVisuals(currentWeather.weather[0].main).image} alt="Illustration" className="sidebar-illustration" />
 
-                            {currentWeather && <h1>{Math.round(currentWeather.main.temp)}°C</h1>}
+                                    <h1>{Math.round(currentWeather.main.temp)}°C</h1>
 
-                            <p><strong>{currentWeather && currentWeather.weather[0].description
-                                .split(' ')
-                                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-                                .join(' ')}
-                            </strong></p>
+                                    <p>
+                                        <strong>
+                                            {currentWeather.weather[0].description
+                                                .split(' ')
+                                                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                                                .join(' ')
+                                            }
+                                        </strong>
+                                    </p>
 
-                            <p className='comment'>Qui ci sarà un divertente commento del signor RainBuddy</p>
+                                    <p className='comment'>{getWeatherVisuals(currentWeather.weather[0].main).message}</p>
+                                </>
+                            )}
 
                         </>
 
@@ -184,7 +270,7 @@ function App() {
                                     <div className="hourly-cards">
                                         {hourlyForecast && hourlyForecast.list.map((hour, index) => (
                                             <div key={index} className="forecast-card">
-                                                <h3>{new Date(hour.dt * 1000).toLocaleTimeString([], { hour: '2-digit', hour12: false })}</h3>
+                                                <h3>{new Date((hour.dt + hourlyForecast.city.timezone) * 1000).getUTCHours()}</h3>
                                                 <img 
                                                     src={`https://openweathermap.org/img/wn/${hour.weather[0].icon}.png`} 
                                                     alt={hour.weather[0].description} 
@@ -196,8 +282,8 @@ function App() {
                                 ) : (
                                     <div className="daily-cards">
                                         {dailyForecast && dailyForecast.list.map((day, index) => {
-                                            const date = new Date(day.dt * 1000);
-                                            const weekday = date.toLocaleDateString('en-US', { weekday: 'short' });
+                                            const date = new Date((day.dt + dailyForecast.city.timezone) * 1000);
+                                            const weekday = date.toLocaleDateString('en-US', { weekday: 'short', timezone: 'UTC' });
                                             return (
                                                 <div key={index} className="forecast-card">
                                                     <h3>{weekday}</h3>
@@ -252,10 +338,10 @@ function App() {
                                             <span className="detail-title">Sunrise & Sunset</span>
                                             <div className="sun-time">
                                                 <div className="sun-time-text">
-                                                    ☀️ {new Date(currentWeather.sys.sunrise * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}
+                                                    ↑ {new Date(currentWeather.sys.sunrise * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}
                                                 </div>
                                                 <div className="sun-time-text">
-                                                    🌙 {new Date(currentWeather.sys.sunset * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}
+                                                    ↓ {new Date(currentWeather.sys.sunset * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}
                                                 </div>
                                             </div>
                                         </div>

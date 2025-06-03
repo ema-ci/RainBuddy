@@ -15,7 +15,6 @@ export const fetchLocation = async (city) => {
     try {
         const response = await axios.get(locationUrl);
         const data = response.data;
-        console.log("Location Data:", data);
 
         if (Array.isArray(data) && data.length === 0) {
             throw new Error("The data array is empty!");
@@ -28,6 +27,8 @@ export const fetchLocation = async (city) => {
                 country: data[0].country
             };
         }
+
+        //console.log("Location Data:", data);
     } catch (error) {
         console.error("Error fetching location data:", error.message);
     }
@@ -57,7 +58,7 @@ export const fetchWeather = async (locationData) => {
             throw new Error(`Error: Received status code ${currentWeatherResponse.data.cod} for current weather`);
         }
         if (dailyForecastResponse.data.cod !== "200") {
-            throw new Error(`Error: Received status code ${dailyForecastResponse.data.cod} for forecast`);
+            throw new Error(`Error: Received status code ${dailyForecastResponse.data.cod} for daily forecast`);
         }
         if (hourlyForecastResponse.data.cod !== "200") {
             throw new Error(`Error: Received status code ${hourlyForecastResponse.data.cod} for hourly forecast`);
@@ -67,7 +68,7 @@ export const fetchWeather = async (locationData) => {
         dailyForecastData = dailyForecastResponse.data;
         hourlyForecastData = hourlyForecastResponse.data;
 
-        console.log("Current Weather Data:", weatherData);
+        //console.log("Current Weather Data:", weatherData);
         //console.log("Daily Forecast Data:", dailyForecastData);
         //console.log("Hourly Forecast Data:", hourlyForecastData);
     } catch (error) {

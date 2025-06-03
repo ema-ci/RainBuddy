@@ -23,6 +23,7 @@ Try it!  ->  https://rainbuddy-eb5e6.web.app/
 some commands:
 
 `npm start`
+`npm ci` reads the package-lock and install
 `npm run build`
 
 `firebase deploy`
