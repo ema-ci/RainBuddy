@@ -20,18 +20,18 @@ Try it!  ->  https://rainbuddy-eb5e6.web.app/
 
 
 
-some commands:
+## Commands to Start the Project:
+1. `npm ci` - Install dependencies from package-lock.json
+2. `npm start` - Start the development server
 
-`npm start`
-`npm ci` reads the package-lock and install
-`npm run build`
+## Other Commands:
 
-`firebase deploy`
-`firebase deploy --only hosting`
+- `npm run build` - Build the project for production
+- `firebase deploy` - Deploy to Firebase
+- `firebase deploy --only hosting` - Deploy only hosting to Firebase
 
-`git branch` see branches
-`git checkout name_branch` switch to a different branch
-
-`git add .`
-`git commit -m ""` commit with message
-`git push` send to remote
+- `git branch` - See branches
+- `git checkout name_branch` - Switch to a different branch
+- `git add .` - Stage all changes
+- `git commit -m ""` - Commit with message
+- `git push` - Send to remote repository
