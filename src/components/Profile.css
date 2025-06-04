@@ -4,6 +4,10 @@
   padding: 20px;
 }
 
+.profile-container h2 {
+  font-size: 1.3rem;
+}
+
 .back-button, .save-button, .delete-button, .delete-confirm-button, .cancel-button, .logout-button {
   background: none;
   border: none;
@@ -79,7 +83,7 @@
   color: black;
   border: none;
   padding: 10px 15px;
-  margin-left: 20px;
+  margin-left: 15px;
   margin-top: 10px;
   border-radius: 4px;
   cursor: pointer;
