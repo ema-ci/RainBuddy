@@ -1,8 +1,10 @@
 import './App.css';
+import './cards.css';
 import rain from './assets/rain.png';
 import clouds from './assets/clouds.png';
 import snow from './assets/snow.png';
 import sun from './assets/sun.png';
+import loading from './assets/loading.gif';
 
 import { useState, useEffect } from 'react';
 import { getAuth, onAuthStateChanged } from "firebase/auth";
@@ -10,7 +12,7 @@ import { db, messaging } from './FirebaseConfig';
 import { doc, getDoc } from 'firebase/firestore';
 import { onMessage } from 'firebase/messaging';
 
-import { fetchLocation, fetchWeather } from "./utils/fetch";
+import { fetchLocation, fetchWeather } from "./utils/fetch_mock";
 import Auth from './components/Auth';
 import Profile from './components/Profile';
 import Fallback from './components/Fallback'
@@ -25,6 +27,7 @@ function App() {
     const [hourlyForecast, setHourlyForecast] = useState(null);
     const [errorMessage, setErrorMessage] = useState('Search for a city');
     const [user, setUser] = useState(null);
+    const [isAuthLoading, setIsAuthLoading] = useState(true);
     const [isOnline, setIsOnline] = useState(navigator.onLine);
 
     const [forecastView, setForecastView] = useState("today"); // "today" o "week"
@@ -73,7 +76,7 @@ function App() {
                     setErrorMessage("Failed to load user data.");
                 }
             }
-
+            setIsAuthLoading(false);
         });
 
         return () => unsubscribe();
@@ -168,6 +171,12 @@ function App() {
     if (!isOnline) {
         // If the user is offline, show the Fallback component
         return <Fallback />;
+    }
+
+    if (isAuthLoading) {
+        return <div>
+            <img src={loading} alt="Loading..." className="loading" />
+        </div>;
     }
 
     if (!user) {
